@@ -1,0 +1,48 @@
+.bottom-panel {
+  display: flex;
+  flex-direction: row;
+  background-color: var(--surface-color);
+  min-height: 400px;
+}
+
+.notes-section {
+  flex: 1;
+  min-width: 250px;
+  border-right: 1px solid var(--border-light);
+}
+
+.calendar-section {
+  flex: 2;
+  min-width: 350px;
+}
+
+/* Base styles are already in index.css */
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app-container {
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .spiral-rings {
+    display: none; /* remove rings on very small mobile for space, or keep them but scale down */
+  }
+
+  .bottom-panel {
+    flex-direction: column;
+  }
+
+  .notes-section {
+    border-right: none;
+    border-top: 1px solid var(--border-light);
+    order: 2; /* Put calendar above notes on mobile */
+  }
+
+  .calendar-section {
+    order: 1;
+    min-width: auto;
+  }
+}

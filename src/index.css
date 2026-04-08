@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #0EA5E9; /* Modern blue */
+  --primary-dark: #0284C7;
+  --primary-light: #E0F2FE;
+  
+  --bg-color: #F8FAFC;
+  --surface-color: #FFFFFF;
+  --canvas: #E2E8F0; /* The wall color behind the calendar */
+
+  --text-dark: #0F172A;
+  --text-muted: #64748B;
+  --text-light: #94A3B8;
+  
+  --border-light: #F1F5F9;
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+  --border-radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme='dark'] {
+  --bg-color: #0F172A;
+  --surface-color: #1E293B;
+  --canvas: #0B0F19; /* dark wall */
+  --text-dark: #F8FAFC;
+  --text-muted: #94A3B8;
+  --text-light: #64748B;
+  --border-light: #334155;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5), 0 2px 4px -2px rgb(0 0 0 / 0.5);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+}
+
+.toolbar {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 100;
+}
+
+.tool-btn {
+  background: var(--surface-color);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.tool-btn:hover {
+  background: var(--primary);
+  color: white;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--canvas);
+  color: var(--text-dark);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+/* Wall Calendar container - gives it the "physical" look */
+.app-container {
+  width: 100%;
+  max-width: 800px; /* Based on typical aspect ratio */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  /* Shadow to give the illusion of hanging */
+  box-shadow: 0 30px 60px rgba(0,0,0,0.12), 0 10px 20px rgba(0,0,0,0.08); 
+  border-radius: 4px;
+  background-color: var(--surface-color);
+  overflow: hidden;
+  user-select: none; /* Prevents text selection cursor on interactive text */
+}
+
+/* Spiral Rings Styling */
+.spiral-rings {
+  position: absolute;
+  top: -10px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  display: flex;
+  justify-content: space-evenly;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.spiral-ring {
+  width: 6px;
+  height: 24px;
+  background: linear-gradient(to right, #444, #888, #444);
+  border-radius: 3px;
+  box-shadow: 1px 2px 3px rgba(0,0,0,0.4);
+  position: relative;
+}
+
+.spiral-ring::before, .spiral-ring::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 4px;
+  background-color: #222;
+  border-radius: 50%;
+  left: -3px;
+  z-index: -1;
+}
+
+.spiral-ring::before { top: 0; }
+.spiral-ring::after { bottom: 0; }
