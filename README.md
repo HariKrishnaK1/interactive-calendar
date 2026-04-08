@@ -7,10 +7,8 @@ Rather than relying on heavy UI frameworks, I built this from scratch using **Vi
 
 ## 🔗 Live Demo & Media
 
-**🔴 Live Website:** [Click here to view deployed component](https://your-vercel-or-netlify-link.com)
-**🎬 Video Walkthrough:** [Click to watch Loom video](https://loom.com/your-video-link)
-
-*(Placeholder: Replace these paths with actual screenshots of your local app before submitting)*
+**🔴 Live Website:** [Click here to view deployed component](https://interactive-calendar-hari.vercel.app/)
+**🎬 Video Walkthrough:** [Click to watch Loom video](https://www.loom.com/share/6beb8f1ec597433a8f712d069452e24e)
 
 ### Desktop / Tablet View
 ![Desktop View](./docs/desktop-view.png)
