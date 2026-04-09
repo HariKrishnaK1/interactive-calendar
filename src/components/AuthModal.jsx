@@ -21,6 +21,12 @@ const AuthModal = ({ onClose, onLoginSuccess }) => {
 
     setLoading(true);
     try {
+      // Temporary mock authentication
+      if (username === 'hari' && password === '123456') {
+        onLoginSuccess({ id: 1, username: 'hari' });
+        return;
+      }
+
       if (isLogin) {
         const data = await api.login(username, password);
         onLoginSuccess({ id: data.userId, username: data.username });
