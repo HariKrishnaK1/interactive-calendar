@@ -10,6 +10,7 @@
   --canvas: #E2E8F0; /* The wall color behind the calendar */
 
   --text-dark: #0F172A;
+  --text-secondary: #475569;
   --text-muted: #64748B;
   --text-light: #94A3B8;
   
@@ -28,6 +29,7 @@
   --surface-color: #1E293B;
   --canvas: #0B0F19; /* dark wall */
   --text-dark: #F8FAFC;
+  --text-secondary: #CBD5E1;
   --text-muted: #94A3B8;
   --text-light: #64748B;
   --border-light: #334155;
@@ -39,9 +41,11 @@
 .toolbar {
   position: absolute;
   top: 1rem;
+  left: 1.5rem;
   right: 1.5rem;
   display: flex;
-  gap: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
   z-index: 100;
 }
 
@@ -59,6 +63,27 @@
   box-shadow: var(--shadow-sm);
   transition: var(--transition);
 }
+
+.text-btn {
+  background: var(--surface-color);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 20px;
+  height: 36px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 0.9em;
+}
+
+.text-btn:hover,
 
 .tool-btn:hover {
   background: var(--primary);

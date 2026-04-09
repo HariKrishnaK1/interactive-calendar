@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Sun, Moon, Image as ImageIcon } from 'lucide-react';
+import { Sun, Moon, Image as ImageIcon, User as UserIcon, LogOut } from 'lucide-react';
 import Hero from './components/Hero';
 import DateGrid from './components/DateGrid';
 import Notes from './components/Notes';
+import AuthModal from './components/AuthModal';
+import { api } from './services/api';
 import './App.css';
 
 // 🎨 Theme changes based on image
@@ -30,7 +32,15 @@ function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [themeIndex, setThemeIndex] = useState(0);
 
-  // Apply dark mode and theme colors to the document root
+  // 👤 User state
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('calendar_user');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [notesList, setNotesList] = useState([]);
+
+  // Apply dark mode and theme colors
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
     document.documentElement.style.setProperty('--primary', IMAGE_THEMES[themeIndex].color);
@@ -43,25 +53,74 @@ function App() {
     }
   }, [isDarkMode, themeIndex]);
 
-  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
-  
-  const cycleTheme = () => {
-    setThemeIndex((prev) => (prev + 1) % IMAGE_THEMES.length);
+  // Fetch API Notes Side-Effect on Login
+  useEffect(() => {
+    if (user) {
+      fetchUserNotes();
+    } else {
+      setNotesList([]);
+    }
+  }, [user]);
+
+  const fetchUserNotes = async () => {
+    try {
+      const data = await api.getNotes(user.id);
+      setNotesList(data);
+    } catch (err) {
+      console.error("Failed to fetch notes:", err);
+    }
+  };
+
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+    localStorage.setItem('calendar_user', JSON.stringify(userData));
+    setShowAuthModal(false);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('calendar_user');
   };
 
   return (
     <div className="app-container">
-      {/* Utility Toolbar for the bonus features */}
       <div className="toolbar">
-        <button onClick={toggleDarkMode} className="tool-btn" aria-label="Toggle Dark Mode">
-          {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-        </button>
-        <button onClick={cycleTheme} className="tool-btn" aria-label="Change Image Theme">
-          <ImageIcon size={18} />
-        </button>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          {user ? (
+            <>
+              <span style={{ 
+                fontSize: '1.05em', 
+                color: '#FFFFFF', 
+                fontWeight: '600',
+                textShadow: '0px 2px 4px rgba(0,0,0,0.8)' 
+              }}>
+                Hi, {user.username}
+              </span>
+            </>
+          ) : (
+            <button onClick={() => setShowAuthModal(true)} className="text-btn">
+              <UserIcon size={16} /> Login / Signup
+            </button>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={() => setIsDarkMode(!isDarkMode)} className="tool-btn" aria-label="Toggle Dark Mode">
+            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+          <button onClick={() => setThemeIndex((prev) => (prev + 1) % IMAGE_THEMES.length)} className="tool-btn" aria-label="Change Image Theme">
+            <ImageIcon size={18} />
+          </button>
+          {user && (
+            <button onClick={handleLogout} className="tool-btn" aria-label="Logout" style={{ marginLeft: '5px' }}>
+              <LogOut size={18} />
+            </button>
+          )}
+        </div>
+
       </div>
 
-      {/* Visual spiral rings for physical calendar effect */}
       <div className="spiral-rings">
         {[...Array(30)].map((_, i) => (
           <div key={i} className="spiral-ring"></div>
@@ -76,6 +135,10 @@ function App() {
             selectedStartDate={selectedStartDate}
             selectedEndDate={selectedEndDate}
             currentMonth={currentMonth}
+            user={user}
+            notesList={notesList}
+            onNotesSaved={fetchUserNotes}
+            openAuth={() => setShowAuthModal(true)}
           />
         </div>
         <div className="calendar-section">
@@ -89,6 +152,13 @@ function App() {
           />
         </div>
       </div>
+
+      {showAuthModal && (
+        <AuthModal 
+          onClose={() => setShowAuthModal(false)} 
+          onLoginSuccess={handleLoginSuccess} 
+        />
+      )}
     </div>
   );
 }
