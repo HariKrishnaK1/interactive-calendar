@@ -14,14 +14,7 @@ const Notes = ({ selectedStartDate, selectedEndDate, currentMonth, user, notesLi
   const monthFallback = `month_${currentMonth.getFullYear()}_${currentMonth.getMonth()}`;
 
   // Find the relevant note from the backend notes list
-  useEffect(() => {
-    if (!user) {
-      setLocalText('');
-      setCurrentNoteId(null);
-      return;
-    }
-
-    // Try finding exact match for date criteria
+  useEffect(() => {    // Try finding exact match for date criteria
     let foundNote = null;
     if (startStr && endStr) {
       foundNote = notesList.find(n => n.startDate === startStr && n.endDate === endStr);
@@ -57,7 +50,7 @@ const Notes = ({ selectedStartDate, selectedEndDate, currentMonth, user, notesLi
       setIsSaving(true);
       try {
         const payload = {
-          userId: user.id,
+          userId: user ? user.id : 'local',
           startDate: startStr || monthFallback,
           endDate: endStr || null,
           note: newText
@@ -67,9 +60,27 @@ const Notes = ({ selectedStartDate, selectedEndDate, currentMonth, user, notesLi
           payload.id = currentNoteId;
         }
 
-        const savedNote = await api.saveNote(payload);
-        if (!currentNoteId && savedNote.id) {
-            setCurrentNoteId(savedNote.id);
+        if (user) {
+          const savedNote = await api.saveNote(payload);
+          if (!currentNoteId && savedNote.id) {
+              setCurrentNoteId(savedNote.id);
+          }
+        } else {
+          const localNotes = JSON.parse(localStorage.getItem('local_calendar_notes') || '[]');
+          
+          if (currentNoteId) {
+             const exactIndex = localNotes.findIndex(n => n.id === currentNoteId);
+             if (exactIndex >= 0) {
+                 localNotes[exactIndex].note = newText;
+             } else {
+                 localNotes.push({ ...payload, id: currentNoteId });
+             }
+          } else {
+             const newId = Date.now().toString();
+             localNotes.push({ ...payload, id: newId });
+             setCurrentNoteId(newId);
+          }
+          localStorage.setItem('local_calendar_notes', JSON.stringify(localNotes));
         }
         
         onNotesSaved(); // Refresh parent list
@@ -80,20 +91,6 @@ const Notes = ({ selectedStartDate, selectedEndDate, currentMonth, user, notesLi
       }
     }, 1000);
   };
-
-  if (!user) {
-    return (
-      <div className="notes-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', height: '100%' }}>
-        <h3 className="notes-title" style={{ marginBottom: '15px' }}>Personal Notes</h3>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: '20px', fontSize: '0.9em' }}>
-          Please log in to save personalized notes, goals, or reminders attached to specific dates.
-        </p>
-        <button onClick={openAuth} style={{ backgroundColor: 'var(--primary)', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}>
-          Log in or Sign up
-        </button>
-      </div>
-    );
-  }
 
   return (
     <div className="notes-container">

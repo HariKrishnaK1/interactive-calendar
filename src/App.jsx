@@ -53,23 +53,24 @@ function App() {
     }
   }, [isDarkMode, themeIndex]);
 
-  // Fetch API Notes Side-Effect on Login
-  useEffect(() => {
+  const fetchNotes = async () => {
     if (user) {
-      fetchUserNotes();
+      try {
+        const data = await api.getNotes(user.id);
+        setNotesList(data);
+      } catch (err) {
+        console.error("Failed to fetch notes:", err);
+      }
     } else {
-      setNotesList([]);
-    }
-  }, [user]);
-
-  const fetchUserNotes = async () => {
-    try {
-      const data = await api.getNotes(user.id);
-      setNotesList(data);
-    } catch (err) {
-      console.error("Failed to fetch notes:", err);
+      const localNotes = JSON.parse(localStorage.getItem('local_calendar_notes') || '[]');
+      setNotesList(localNotes);
     }
   };
+
+  // Fetch API Notes Side-Effect on Login
+  useEffect(() => {
+    fetchNotes();
+  }, [user]);
 
   const handleLoginSuccess = (userData) => {
     setUser(userData);
@@ -137,7 +138,7 @@ function App() {
             currentMonth={currentMonth}
             user={user}
             notesList={notesList}
-            onNotesSaved={fetchUserNotes}
+            onNotesSaved={fetchNotes}
             openAuth={() => setShowAuthModal(true)}
           />
         </div>
