@@ -100,10 +100,19 @@ const DateGrid = ({
     // Check for Holiday highlights bonus feature
     const holidays = {
       '1-1': 'New Year',
+      '1-23': 'Netaji Jayanti',
+      '1-26': 'Republic Day (India)',
       '2-14': 'Valentine\'s Day',
-      '7-4': 'Independence Day',
+      '4-14': 'Ambedkar Jayanti',
+      '5-1': 'Labour Day',
+      '6-21': 'International Yoga Day',
+      '8-15': 'Independence Day (India)',
+      '9-5': 'Teachers\' Day',
+      '10-2': 'Gandhi Jayanti',
       '10-31': 'Halloween',
-      '12-25': 'Christmas'
+      '11-14': 'Children\'s Day',
+      '12-25': 'Christmas',
+      '12-31': 'New Year\'s Eve'
     };
     const holidayName = holidays[`${day.getMonth() + 1}-${day.getDate()}`];
 
